@@ -10,10 +10,10 @@ Date.prototype.toDateInputValue = (function() {
 var app = {
     // Application Constructor
     mqttClient:null,
-    serverUrl:'http://localhost:8080/',
+    serverUrl:'http://18.222.196.11/',
     initialize: function() {
-      //  document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-      this.onDeviceReady();
+      document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+      //this.onDeviceReady();
     },
 
     onDeviceReady: function() {
@@ -22,15 +22,21 @@ var app = {
       this.startMqtt();
     },
     startMqtt:function(){
-      app.mqttClient  = mqtt.connect('ws://localhost:9000/')
+      app.mqttClient  = mqtt.connect('ws://18.222.196.11:9000/')
       app.mqttClient.on('connect', function () {
         app.mqttClient.subscribe('addCardStatus', function (err) {});
+        app.mqttClient.subscribe('newEntry', function (err) {});
       })
       app.mqttClient.on('message', function (topic, message) {
         console.log("topic: "+topic.toString()+" Message:"+message.toString())
-        /*if(topic.toString().includes("addCardStatus")){
+        if(topic.toString().includes("addCardStatus")){
           app.addCardToDb($('input[name="newCardName"]').val(),$('input[name="newCardSurname"]').val(),message.toString())
-        }*/
+        }
+        else if(topic.toString().includes("newEntry")){
+          var data=message.toString().split(',');
+          console.log(data);
+          app.addInfo(data[0] == null ? "Unknown":data[0],data[1] == null ? "Unknown":data[1],data[2],new Date(data[3]),data[4]=="false"?0:1);
+        }
       });
     },
     initButtons:function(){
@@ -72,7 +78,7 @@ var app = {
         success:function(data){
           console.log(data);
           for(var i=0 ;i<data.length;i++){
-            app.addInfo(data[i].name,data[i].surname,data[i].key,new Date(data[i].date),data[i].valid);
+            app.addInfo(data[i].name == null ? "Unknown":data[i].name,data[i].surname == null ? "Unknown":data[i].surname,data[i].key,new Date(data[i].date),data[i].valid);
           }
         }
       });
