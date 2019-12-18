@@ -10,6 +10,7 @@ Date.prototype.toDateInputValue = (function() {
 var app = {
     // Application Constructor
     mqttClient:null,
+    serverUrl:'http://localhost:8080/',
     initialize: function() {
       //  document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
       this.onDeviceReady();
@@ -18,15 +19,18 @@ var app = {
     onDeviceReady: function() {
       this.root(1);
       this.initButtons();
-      sartMqtt();
+      this.startMqtt();
     },
     startMqtt:function(){
-      mqttClient  = mqtt.connect('mqtt://test.mosquitto.org')
-      client.on('connect', function () {
-        client.subscribe('addCardSatatus', function (err) {});
+      app.mqttClient  = mqtt.connect('ws://localhost:9000/')
+      app.mqttClient.on('connect', function () {
+        app.mqttClient.subscribe('addCardStatus', function (err) {});
       })
-      client.on('message', function (topic, message) {
+      app.mqttClient.on('message', function (topic, message) {
         console.log("topic: "+topic.toString()+" Message:"+message.toString())
+        /*if(topic.toString().includes("addCardStatus")){
+          app.addCardToDb($('input[name="newCardName"]').val(),$('input[name="newCardSurname"]').val(),message.toString())
+        }*/
       });
     },
     initButtons:function(){
@@ -39,7 +43,7 @@ var app = {
     root:function(id){
       switch(id){
         case 1:
-          this.loadServerData();
+          this.loadServerData(new Date().toDateInputValue());
         break;
         case 2:
           $(".container").html('<div class="addCardWrapper"><h2>Place The Card On the RFID Reader Then Press "Add Card"</h2><i class="fas fa-id-card"></i> <input type="text" name="newCardName" Placeholder="First Name"> <input type="text" name="newCardSurname" Placeholder="last Name"><button type="button" name="addCard">Add Card</button></div>');
@@ -54,27 +58,44 @@ var app = {
         break;
       }
     },
-    loadServerData:function(){
+    loadServerData:function(date){
       $(".container").html('<div class="infoDate"><label for="startDate">Day</label><input type="date" name="startDate"></div><div class="info"><h4>Name</h4><h4>Surname</h4><h4>Key</h4><h4 class="date">Date</h4><div class="circle"></div></div>');
-      $('input[name="startDate"]').val(new Date().toDateInputValue());
+      $('input[name="startDate"]').val(date);
 
       $('input[type="date"]').on("change",function(){
-        console.log($('input[name="startDate"]').val());
+        app.loadServerData($('input[name="startDate"]').val());
       });
-      for(var i=0 ;i<10;i++){
-        this.addInfo("mouloud","fateh","F7S89AQ",new Date(),true);
-      }
-
+      $.ajax({
+        type:'GET',
+        data:{selectDate:$('input[name="startDate"]').val()},
+        url:app.serverUrl+'getControlData',
+        success:function(data){
+          console.log(data);
+          for(var i=0 ;i<data.length;i++){
+            app.addInfo(data[i].name,data[i].surname,data[i].key,new Date(data[i].date),data[i].valid);
+          }
+        }
+      });
     },
     addInfo:function(name,surname,key,d,valid){
-      date = [ (d.getMonth()+1).padLeft(),
-                    d.getDate().padLeft(),
+      date = [      d.getDate().padLeft(),
+                    (d.getMonth()+1).padLeft(),
                     d.getFullYear()].join('/')+
                     ' ' +
                   [ d.getHours().padLeft(),
                     d.getMinutes().padLeft(),
                     d.getSeconds().padLeft()].join(':');
-      $(".container").append('<div class="info"><h4>'+name+'</h4><h4>'+surname+'</h4><h4>'+key+'</h4><h4 class="date">'+date+'</h4><div class="circle '+(valid?'green':'red')+'"></div></div>')
+      $('<div class="info"><h4>'+name+'</h4><h4>'+surname+'</h4><h4>'+key+'</h4><h4 class="date">'+date+'</h4><div class="circle '+(valid?'green':'red')+'"></div></div>').hide().appendTo(".container").fadeIn(200);
+    },
+    addCardToDb:function(name,surname,key){
+      $.ajax({
+        type:'POST',
+        data:{name:name,surname:surname,key:key},
+        url:app.serverUrl+'addCard',
+        success:function(data){
+          alert("Card Added Successfully")
+        }
+      });
     }
 };
 
