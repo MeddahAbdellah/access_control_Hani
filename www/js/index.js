@@ -11,6 +11,7 @@ var app = {
     // Application Constructor
     mqttClient:null,
     serverUrl:'http://18.222.196.11/',
+    page:1,
     initialize: function() {
       document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
       //this.onDeviceReady();
@@ -35,7 +36,7 @@ var app = {
         else if(topic.toString().includes("newEntry")){
           var data=message.toString().split(',');
           console.log(data);
-          app.addInfo(data[0] == null ? "Unknown":data[0],data[1] == null ? "Unknown":data[1],data[2],new Date(data[3]),data[4]=="false"?0:1);
+          if(app.page==1)app.addInfo(data[0] == null ? "Unknown":data[0],data[1] == null ? "Unknown":data[1],data[2],new Date(data[3]),data[4]=="false"?0:1);
         }
       });
     },
@@ -47,6 +48,7 @@ var app = {
       });
     },
     root:function(id){
+      app.page=id;
       switch(id){
         case 1:
           this.loadServerData(new Date().toDateInputValue());
