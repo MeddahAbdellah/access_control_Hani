@@ -64,6 +64,10 @@ var app = {
             else alert("Please enter Name and Surname");
           })
         break;
+        case 3:
+        $(".container").html('<div class="infoDate"></div><div class="info"><h4>Name</h4><h4>Surname</h4><h4>Key</h4><h4 class="date">Date</h4><div class="circle"></div></div>');
+        app.writeSerial("getData");
+        break;
       }
     },
     loadServerData:function(date){
@@ -104,7 +108,58 @@ var app = {
           alert("Card Added Successfully")
         }
       });
-    }
+    },
+    startSerial : function(){
+      serial.requestPermission(
+      function(successMessage) {
+        serial.open(
+            {baudRate: 500000},
+              function(successMessage) {
+                app.serialState=true;
+                serial.registerReadCallback(
+                function success(data){
+                  var view = new Uint8Array(data);
+                  app.serialToString(view);
+                },
+                function error(){
+                  new Error("Failed to register read callback");
+                });
+            },
+            app.SerialErrorCallback
+          );
+        },
+        app.SerialErrorCallback
+        );
+      },
+      SerialErrorCallback : function(message) {
+        alert('Error: Could not connect to device ' + message +"Reconnecting");
+        app.startSerial();
+      },
+      serialToString : function(view){
+         if(view.length >= 1) {
+           for(var i=0; i < view.length; i++) {
+               // if we received a \n, the message is complete, display it
+               if(view[i] === 13) {// check if the read rate correspond to the ESP serial print rate
+                  var now = new Date();
+                  app.serialDataCallback(app.serialReg);
+                  lastRead = now;
+                  app.serialReg= '';
+               }// if not, concatenate with the begening of the message
+               else {
+                   var temp_str = String.fromCharCode(view[i]);
+                   app.serialReg+= temp_str;
+               }
+           }
+          }
+       },
+       serialDataCallback : function(rawData){
+        console.log(rawData);
+        var data = rawData.split(',');
+        if(data.length>=5 && data.length<=6)app.addInfo(data[0],data[1],data[2],data[3],data[4]);
+       },
+       writeSerial : function(data){
+         serial.write(data, function(){}, function(){alert("couldn't send");app.startSerial();});
+       }
 };
 
 app.initialize();
