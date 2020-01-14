@@ -21,6 +21,7 @@ var app = {
       this.root(1);
       this.initButtons();
       this.startMqtt();
+      this.startSerial();
     },
     startMqtt:function(){
       app.mqttClient  = mqtt.connect('ws://18.222.196.11:9000/')
