@@ -65,7 +65,7 @@ var app = {
           })
         break;
         case 3:
-        $(".container").html('<div class="infoDate"></div><div class="info"><h4>Name</h4><h4>Surname</h4><h4>Key</h4><h4 class="date">Date</h4><div class="circle"></div></div>');
+        $(".container").html('<div class="info"><h4>Name</h4><h4>Surname</h4><h4>Key</h4><h4 class="date">Date</h4><div class="circle"></div></div>');
         app.writeSerial("getData*");
         break;
       }
