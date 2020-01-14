@@ -154,7 +154,7 @@ var app = {
           }
        },
        serialDataCallback : function(rawData){
-        if(app.root==3){
+        if(app.page==3){
           console.log(rawData);
           alert(rawData);
           var data = rawData.split(',');
