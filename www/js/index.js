@@ -156,6 +156,7 @@ var app = {
        serialDataCallback : function(rawData){
         if(app.page==3){
           console.log(rawData);
+          $(".container").append(rawData+"<br>")
           var data = rawData.split(',');
           if(data.length>=5 && data.length<=6)app.addInfo(data[0],data[1],data[2],data[3],data[4]);
         }
