@@ -157,9 +157,9 @@ var app = {
         if(app.page==3){
           console.log(rawData);
           var logs = rawData.split("*");
-          for(var rawDataline in logs){
-            $(".container").append(rawDataline+"<br>")
-            var data = rawDataline.split(',');
+          for(var i = 0 ; i < logs.length ;i++){
+            $(".container").append(logs[i]+"<br>")
+            var data = logs[i].split(',');
             if(data.length>=5 && data.length<=6)app.addInfo(data[0],data[1],data[2],data[3],data[4]);
           }
         }
