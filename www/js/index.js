@@ -160,6 +160,7 @@ var app = {
           for(var i = 0 ; i < logs.length ;i++){
             $(".container").append(logs[i]+"<br>")
             var data = logs[i].split(',');
+            $(".container").append("length: "+data.length+"<br>");
             if(data.length>=5 && data.length<=6)app.addInfo(data[0],data[1],data[2],data[3],data[4]);
           }
         }
