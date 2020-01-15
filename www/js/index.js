@@ -158,11 +158,9 @@ var app = {
           console.log(rawData);
           var logs = rawData.split("*");
           for(var i = 0 ; i < logs.length ;i++){
-            $(".container").append(logs[i]+"<br>")
             var data = logs[i].split(',');
             if(data.length==5){
-              $(".container").append("Adding Info<br>");
-              app.addInfo(data[0],data[1],data[2],data[3],data[4]);
+              app.addInfo(data[0],data[1],data[2],new Date(data[3]),data[4]);
             }
           }
         }
