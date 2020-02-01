@@ -110,6 +110,7 @@ var app = {
       });
     },
     startSerial : function(){
+      alert("Connecting to ESP");
       serial.requestPermission(
       function(successMessage) {
         serial.open(
