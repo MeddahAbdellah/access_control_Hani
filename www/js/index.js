@@ -21,7 +21,6 @@ var app = {
       this.root(1);
       this.initButtons();
       this.startMqtt();
-      this.startSerial();
     },
     startMqtt:function(){
       app.mqttClient  = mqtt.connect('ws://18.222.196.11:9000/')
@@ -67,7 +66,7 @@ var app = {
         break;
         case 3:
         $(".container").html('<div class="info"><h4>Name</h4><h4>Surname</h4><h4>Key</h4><h4 class="date">Date</h4><div class="circle"></div></div>');
-        app.writeSerial("getData*");
+        app.startSerial();
         break;
       }
     },
@@ -125,6 +124,7 @@ var app = {
                 function error(){
                   new Error("Failed to register read callback");
                 });
+                app.writeSerial("getData*");
             },
             app.SerialErrorCallback
           );
