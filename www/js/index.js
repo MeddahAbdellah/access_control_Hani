@@ -110,7 +110,6 @@ var app = {
       });
     },
     startSerial : function(){
-      alert("Connecting to ESP");
       serial.requestPermission(
       function(successMessage) {
         serial.open(
@@ -125,6 +124,7 @@ var app = {
                 function error(){
                   new Error("Failed to register read callback");
                 });
+                alert("Connected to ESP");
                 app.writeSerial("getData*");
             },
             app.SerialErrorCallback
