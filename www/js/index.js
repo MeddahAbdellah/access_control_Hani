@@ -124,7 +124,7 @@ var app = {
                 function error(){
                   new Error("Failed to register read callback");
                 });
-                setTimeout(function(){app.writeSerial("getData*")},500);
+                setInterval(function(){app.writeSerial("getData*")},10000);
 
             },
             app.SerialErrorCallback
