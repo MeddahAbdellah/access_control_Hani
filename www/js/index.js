@@ -124,8 +124,8 @@ var app = {
                 function error(){
                   new Error("Failed to register read callback");
                 });
-                alert("Connected to ESP");
-                app.writeSerial("getData*");
+                setTimeout(function(){ alert("Sending Get Data to ESP");app.writeSerial("getData*")},500);
+
             },
             app.SerialErrorCallback
           );
