@@ -124,7 +124,7 @@ var app = {
                 function error(){
                   new Error("Failed to register read callback");
                 });
-                setTimeout(function(){ alert("Sending Get Data to ESP");app.writeSerial("getData*")},500);
+                setTimeout(function(){app.writeSerial("getData*")},500);
 
             },
             app.SerialErrorCallback
@@ -156,6 +156,7 @@ var app = {
        },
        serialDataCallback : function(rawData){
         if(app.page==3){
+          alert(rawData);
           console.log(rawData);
           var logs = rawData.split("*");
           for(var i = 0 ; i < logs.length ;i++){
