@@ -156,7 +156,6 @@ var app = {
        },
        serialDataCallback : function(rawData){
         if(app.page==3){
-          alert(rawData);
           console.log(rawData);
           var logs = rawData.split("*");
           for(var i = 0 ; i < logs.length ;i++){
